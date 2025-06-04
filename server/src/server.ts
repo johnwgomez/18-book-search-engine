@@ -4,7 +4,7 @@ import db from './config/connection.js';
 import routes from './routes/index.js';
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = parseInt(process.env.PORT || '10000', 10); // Use the default Render port
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
