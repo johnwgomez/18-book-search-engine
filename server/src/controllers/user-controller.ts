@@ -24,7 +24,11 @@ export const createUser = async (req: Request, res: Response) => {
   if (!user) {
     return res.status(400).json({ message: 'Something is wrong!' });
   }
-  const token = signToken(user.username, user.password, user._id);
+  const token = signToken({
+    _id: (user._id as string).toString(),
+    username: user.username,
+    email: user.email,
+  });
   return res.json({ token, user });
 };
 
@@ -41,7 +45,11 @@ export const login = async (req: Request, res: Response) => {
   if (!correctPw) {
     return res.status(400).json({ message: 'Wrong password!' });
   }
-  const token = signToken(user.username, user.password, user._id);
+  const token = signToken({
+    _id: (user._id as string).toString(),
+    username: user.username,
+    email: user.email,
+  });
   return res.json({ token, user });
 };
 

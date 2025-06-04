@@ -1,3 +1,4 @@
+import type { Request } from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -22,8 +23,8 @@ export interface GraphQLContext {
  * Extracts and verifies JWT from the request headers.
  * Returns a context object with user info if the token is valid.
  */
-export const authMiddleware = async ({ req }: { req: { headers: { authorization?: string } } }): Promise<GraphQLContext> => {
-  const header = req.headers.authorization || '';
+export const authMiddleware = async ({ req }: { req: Request }): Promise<GraphQLContext> => {
+  const header = req.headers?.authorization || '';
   
   // Strip 'Bearer ' prefix if present and clean up the token
   const token = header.startsWith('Bearer ') ? header.slice(7).trim() : header;
