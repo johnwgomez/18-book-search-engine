@@ -7,6 +7,9 @@ import bodyParser from 'body-parser';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 import db from './config/connection.js';
 import { typeDefs } from './services/typeDef.js';
 import { resolvers } from './services/resolvers.js';
@@ -32,6 +35,19 @@ async function startServer() {
       context: async ({ req }) => authMiddleware({ req }),
     })
   );
+
+  // Required for __dirname in ES modules
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+
+  // Serve static files from the React app in production
+  if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../../client/dist')));
+
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+    });
+  }
 
   // 4️⃣ Launch HTTP server
   app.listen(PORT, () => {
