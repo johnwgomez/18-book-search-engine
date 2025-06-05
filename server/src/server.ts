@@ -1,28 +1,50 @@
+// server/src/server.ts
+
+import 'dotenv/config';
 import express from 'express';
-import path, { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+
 import db from './config/connection.js';
-import routes from './routes/index.js';
+import { typeDefs } from './services/typeDef.js';
+import { resolvers } from './services/resolvers.js';
+import { authMiddleware } from './services/auth.js';
 
-const app = express();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const PORT = parseInt(process.env.PORT || '10000', 10); // Use the default Render port
+const PORT = process.env.PORT || 3001;
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+async function startServer() {
+  // 1️⃣ Start Apollo
+  const server = new ApolloServer({ typeDefs, resolvers });
+  await server.start();
 
-// if we're in production, serve Vite dist as static assets
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.resolve(__dirname, '../../../client/dist')));
+  // 2️⃣ Configure Express
+  const app = express();
+  app.use(cors());
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('*', (_, res) => {
-    res.sendFile(path.resolve(__dirname, '../../../client/dist/index.html'));
+  // 3️⃣ Mount GraphQL
+  app.use(
+    '/graphql',
+    expressMiddleware(server, {
+      context: async ({ req }) => authMiddleware({ req }),
+    })
+  );
+
+  // 4️⃣ Launch HTTP server
+  app.listen(PORT, () => {
+    console.log(`🚀 GraphQL Server ready at http://localhost:${PORT}/graphql`);
   });
+
+  // 5️⃣ MongoDB event logs
+  db.on('error', (err) => console.error('❌ MongoDB connection error:', err));
+  db.once('open', () => console.log('✅ MongoDB connected'));
 }
 
-app.use(routes);
-
-db.once('open', () => {
-  app.listen(PORT, () => console.log(`🌍 Now listening on localhost:${PORT}`));
+// Boot it up
+startServer().catch((err) => {
+  console.error('Failed to start server:', err);
+  process.exit(1);
 });

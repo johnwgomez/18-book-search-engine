@@ -9,7 +9,7 @@ interface SignupFormProps {
   handleModalClose: () => void;
 }
 
-// <— only the fields you need for signup, all strings
+
 interface FormUserData {
   username: string;
   email: string;

@@ -13,7 +13,7 @@ const router = Router();
 // Public routes
 router.post('/', createUser);
 router.post('/login', login);
-
+// middleware auth.
 const ensureAuth = async (
   req: Request,
   res: Response,
