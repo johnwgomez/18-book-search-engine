@@ -1,0 +1,24 @@
+# Node modules
+**/node_modules/
+
+# Output directories
+**/dist/
+*.tsbuildinfo
+
+# Logs
+*.log
+
+# Environment variables
+**/.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE configs
+.vscode/
+.idea/
+
+# Other
+.npm/
+render.yaml
