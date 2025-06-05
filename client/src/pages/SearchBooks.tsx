@@ -1,3 +1,4 @@
+// Client/src/pages/SearchBooks.tsx
 import React, { useState, useEffect, FormEvent } from 'react';
 import {
   Container,
@@ -13,16 +14,7 @@ import { useMutation } from '@apollo/client';
 import { SAVE_BOOK } from '../utils/mutations';
 import { GET_ME } from '../utils/queries';
 
-interface GoogleAPIVolumeInfo {
-  title: string;
-  authors?: string[];
-  description?: string;
-  imageLinks?: {
-    thumbnail?: string;
-  };
-  infoLink?: string;
-  previewLink?: string;
-}
+import type { GoogleAPIBook } from '../models/GoogleAPIBook';
 
 interface BookData {
   bookId: string;
@@ -59,17 +51,14 @@ const SearchBooks: React.FC = () => {
         )}`
       );
       const { items = [] } = await response.json();
-      const books: BookData[] = items.map((b) => {
-        const v: GoogleAPIVolumeInfo = b.volumeInfo;
-        return {
-          bookId: b.id,
-          authors: v.authors || ['No author to display'],
-          title: v.title,
-          description: v.description,
-          image: v.imageLinks?.thumbnail || '',
-          link: v.infoLink || v.previewLink || '',
-        };
-      });
+      const books: BookData[] = items.map((b: GoogleAPIBook) => ({
+        bookId: b.id,
+        authors: b.volumeInfo.authors || ['No author to display'],
+        title: b.volumeInfo.title,
+        description: b.volumeInfo.description,
+        image: b.volumeInfo.imageLinks?.thumbnail || '',
+        link: b.volumeInfo.infoLink || b.volumeInfo.previewLink || '',
+      }));
       setSearchedBooks(books);
       setSearchInput('');
     } catch (err) {
