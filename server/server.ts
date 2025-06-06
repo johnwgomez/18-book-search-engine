@@ -13,10 +13,10 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-import db from './config/connection.js';
-import { typeDefs } from './services/typeDef.js';
-import { resolvers } from './services/resolvers.js';
-import { authMiddleware } from './services/auth.js';
+import db from './src/config/connection.js';
+import { typeDefs } from './src/services/typeDef.js';
+import { resolvers } from './src/services/resolvers.js';
+import { authMiddleware } from './src/services/auth.js';
 
 const PORT = process.env.PORT || 3001;
 

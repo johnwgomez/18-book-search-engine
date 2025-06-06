@@ -22,7 +22,7 @@
     "server/src/**/*",
     "client/src/**/*",
     "client/vite-env.d.ts"
-  ],
+, "server/server.ts"  ],
 
   /* Never touch these build outputs or deps */
   "exclude": [
