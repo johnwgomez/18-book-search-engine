@@ -7,6 +7,12 @@ import bodyParser from 'body-parser';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 import db from './config/connection.js';
 import { typeDefs } from './services/typeDef.js';
 import { resolvers } from './services/resolvers.js';
@@ -32,6 +38,14 @@ async function startServer() {
       context: async ({ req }) => authMiddleware({ req }),
     })
   );
+
+  if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../../client/dist')));
+
+    app.get('*', (_, res) => {
+      res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+    });
+  }
 
   // 4️⃣ Launch HTTP server
   app.listen(PORT, () => {
