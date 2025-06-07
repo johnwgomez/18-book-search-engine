@@ -21,17 +21,17 @@ import { authMiddleware } from './services/auth.js';
 const PORT = process.env.PORT || 3001;
 
 async function startServer() {
-  // 1️⃣ Start Apollo
+  // Step 1: Set up the Apollo GraphQL server
   const server = new ApolloServer({ typeDefs, resolvers });
   await server.start();
 
-  // 2️⃣ Configure Express
+  // Step 2: Set up Express so we can handle incoming requests
   const app = express();
   app.use(cors());
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
-  // 3️⃣ Mount GraphQL
+  // Step 3: Connect Apollo Server to our Express app using middleware
   app.use(
     '/graphql',
     expressMiddleware(server, {
@@ -47,17 +47,17 @@ async function startServer() {
     });
   }
 
-  // 4️⃣ Launch HTTP server
+  // Step 4: Start the server and listen on the specified port
   app.listen(PORT, () => {
     console.log(`🚀 GraphQL Server ready at http://localhost:${PORT}/graphql`);
   });
 
-  // 5️⃣ MongoDB event logs
+  // Step 5: Log MongoDB connection events so we know if it works or not
   db.on('error', (err) => console.error('❌ MongoDB connection error:', err));
   db.once('open', () => console.log('✅ MongoDB connected'));
 }
 
-// Boot it up
+// Finally, run everything to launch our app
 startServer().catch((err) => {
   console.error('Failed to start server:', err);
   process.exit(1);
