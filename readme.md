@@ -106,8 +106,11 @@ NODE_ENV=production
 
 ## 📸 Screenshots
 
-> _Add screenshots or deployment previews here_
+### Home Page
+![Home Page](./screenshots/Screenshot%202025-06-06%20at%209.06.20 PM.png)
 
+### Dashboard View
+![Dashboard](./screenshots/Screenshot%202025-06-06%20at%209.06.33 PM.png)
 ---
 
 ## 🧠 Author
